@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "stochastic_simulation"
+name = "StochasticSimulation"
 version = "0.1.0"
