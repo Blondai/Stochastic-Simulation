@@ -62,13 +62,16 @@ impl DistributionFunction {
 
 // Evaluation
 impl DistributionFunction {
-    fn _get_index(values: &Vec<f64>, input_value: f64) -> usize {
+    fn _get_index(values: &Vec<f64>, input_value: f64) -> (usize, bool) {
         for index in 0..values.len() {
-            if input_value <= values[index] {
-                return index - 1;
+            if input_value == values[index] {
+                return (index, true);
+            }
+            if input_value < values[index] {
+                return (index - 1, false);
             }
         }
-        return values.len() - 1;
+        return (values.len() - 1, false);
     }
 
     fn _evaluate(&self, input_value: f64) -> f64 {
@@ -77,12 +80,17 @@ impl DistributionFunction {
         } else if input_value > self.x_values[self.length - 1usize] {
             return 1f64;
         }
-        let index: usize = DistributionFunction::_get_index(&self.x_values, input_value);
-        let numerator: f64 =
-            self.y_values[index] * (self.x_values[index + 1] - input_value)
-                + self.y_values[index + 1] * (input_value - self.x_values[index]);
-        let denominator: f64 = self.x_values[index + 1] - self.x_values[index];
-        numerator / denominator
+        let tuple: (usize, bool) = DistributionFunction::_get_index(&self.x_values, input_value);
+        let index: usize = tuple.0;
+        let is_exact: bool = tuple.1;
+        if is_exact {
+            return self.y_values[index];
+        } else {
+            let numerator: f64 = self.y_values[index + 1] - self.y_values[index];
+            let denominator: f64 = self.x_values[index + 1] - self.x_values[index];
+            let factor: f64 = input_value - self.x_values[index];
+            return numerator / denominator * factor + self.y_values[index];
+        }
     }
 
     pub fn eval(self, input_value: f64) -> f64 {
@@ -103,5 +111,35 @@ impl DistributionFunction {
     const fn _get_accuracy() -> f64 {
         const ACCURACY: f64 = 0.01;
         ACCURACY
+    }
+}
+
+// Solver
+impl DistributionFunction {
+    pub fn solve(&self, output_value: f64) -> f64 {
+        DistributionFunction::_test_output_value(output_value);
+        let tuple: (usize, bool) = DistributionFunction::_get_index(&self.y_values, output_value);
+        let index: usize = tuple.0;
+        let is_exact: bool = tuple.1;
+        if is_exact {
+            return self.x_values[index];
+        } else {
+            let numerator: f64 = self.x_values[index + 1] - self.x_values[index];
+            let denominator: f64 = self.y_values[index + 1] - self.y_values[index];
+            let factor: f64 = output_value - self.y_values[index];
+            return numerator / denominator * factor + self.x_values[index];
+        }
+    }
+
+    fn _test_output_value(output_value: f64) {
+        const ACCURACY: f64 = DistributionFunction::_get_accuracy();
+        let mut correct_output_value: bool = true;
+        if output_value > 1f64 + ACCURACY {
+            correct_output_value = false
+        }
+        if output_value < 0f64 - ACCURACY {
+            correct_output_value = false
+        }
+        assert!(correct_output_value, "Value '{}' is not between 0 ± {} and 1 ± {}", output_value, ACCURACY, ACCURACY)
     }
 }
