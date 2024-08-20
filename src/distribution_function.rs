@@ -164,7 +164,7 @@ impl DistributionFunction {
         self.solve(uniform)
     }
 
-    fn _inverse_transform_sampling(&self, number: u32) -> Vec<f64> {
+    fn _inverse_transform_sampling(&self, number: usize) -> Vec<f64> {
         let mut vector: Vec<f64> = Vec::new();
         for _ in 0..number {
             vector.push(self._single_inverse_transform_sampling())
@@ -179,19 +179,19 @@ impl DistributionFunction {
         self._single_inverse_transform_sampling()
     }
 
-    pub fn gens(&self, number: u32) -> Vec<f64> {
+    pub fn gens(&self, number: usize) -> Vec<f64> {
         self._inverse_transform_sampling(number)
     }
 }
 
 // Export
 impl DistributionFunction {
-    pub fn export(self, file_name: &str, number: u32) {
+    pub fn export(self, file_name: &str, number: usize) {
         use std::{fs::File, io::Write};
 
         let random_numbers: Vec<f64> = self.gens(number);
 
-        let string = random_numbers.into_iter()
+        let string: String = random_numbers.into_iter()
             .map(|num| num.to_string())
             .collect::<Vec<String>>()
             .join("\n");

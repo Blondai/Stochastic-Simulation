@@ -13,6 +13,13 @@ You can see in blue the result of pulling 1000000 standard normal distributed va
 In orange you can see the density function of a standard normal distribution.
 As you can see they are the same.
 
+Using the density function of a standard normal distribution and integrating it linearly to get a distribution function.
+This generates
+<p align="center">
+  <img src="./example/example1.png" width="600px">
+</p>
+As you can see it looks almost the same. So it seems that our methods are working.
+
 
 ## Goals
 

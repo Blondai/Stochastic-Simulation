@@ -3,6 +3,8 @@
 /.idea
 /.git
 /.old
+/math/.ipynb_checkpoints
+/test
 
 # Files
 Cargo.lock
