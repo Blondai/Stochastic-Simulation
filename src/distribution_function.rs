@@ -1,3 +1,6 @@
+use rand::Rng;
+use rand::rngs::ThreadRng;
+
 pub struct DistributionFunction {
     x_values: Vec<f64>,
     y_values: Vec<f64>,
@@ -24,6 +27,7 @@ impl DistributionFunction {
 
 // Tests
 impl DistributionFunction {
+    // TODO: Add corrections to this methods
     fn _test_sorted(x_values: &Vec<f64>, y_values: &Vec<f64>) {
         let mut is_sorted: bool = true;
         for index in 0..(x_values.len() - 1) {
@@ -116,7 +120,7 @@ impl DistributionFunction {
 
 // Solver
 impl DistributionFunction {
-    pub fn solve(&self, output_value: f64) -> f64 {
+    fn solve(&self, output_value: f64) -> f64 {
         DistributionFunction::_test_output_value(output_value);
         let tuple: (usize, bool) = DistributionFunction::_get_index(&self.y_values, output_value);
         let index: usize = tuple.0;
@@ -141,5 +145,40 @@ impl DistributionFunction {
             correct_output_value = false
         }
         assert!(correct_output_value, "Value '{}' is not between 0 ± {} and 1 ± {}", output_value, ACCURACY, ACCURACY)
+    }
+}
+
+// Uniform Distribution
+impl DistributionFunction {
+    fn _single_uniform() -> f64 {
+        let mut rng: ThreadRng = rand::thread_rng();
+        rng.gen()
+    }
+}
+
+// Inverse Transform Sampling
+impl DistributionFunction {
+    fn _single_inverse_transform_sampling(&self) -> f64 {
+        let uniform: f64 = DistributionFunction::_single_uniform();
+        self.solve(uniform)
+    }
+
+    fn _inverse_transform_sampling(&self, number: u32) -> Vec<f64> {
+        let mut vector: Vec<f64> = Vec::new();
+        for _ in 0..number {
+            vector.push(self._single_inverse_transform_sampling())
+        }
+        vector
+    }
+}
+
+// Random Number Generation
+impl DistributionFunction {
+    pub fn gen(&self) -> f64 {
+        self._single_inverse_transform_sampling()
+    }
+
+    pub fn gens(&self, number: u32) -> Vec<f64> {
+        self._inverse_transform_sampling(number)
     }
 }

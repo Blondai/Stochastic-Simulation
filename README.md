@@ -7,7 +7,7 @@ This will be achieved by using [inverse transform sampling](https://en.wikipedia
 ## Goals
 
 - [X] Linear interpolation between values
-- [ ] Inverse Transform Sampling for distribution functions
+- [X] Inverse Transform Sampling for distribution functions
 - [ ] Numeric integration to get distribution function from density function
 - [ ] Prebuilt common distributions
 
@@ -18,11 +18,11 @@ This will be achieved by using [inverse transform sampling](https://en.wikipedia
 - [ ] Normalize distribution
 
 
-- [ ] DistributionFunction class
+- [X] DistributionFunction class
 
 
-- [ ] Inverse Transform Sampling algorithm
-- [ ] Multiple output values
+- [X] Inverse Transform Sampling algorithm
+- [X] Multiple output values
 
 
 - [ ] DensityFunction class
