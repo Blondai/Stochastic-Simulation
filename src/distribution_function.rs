@@ -1,6 +1,3 @@
-use rand::Rng;
-use rand::rngs::ThreadRng;
-
 pub struct DistributionFunction {
     x_values: Vec<f64>,
     y_values: Vec<f64>,
@@ -67,7 +64,7 @@ impl DistributionFunction {
 // Evaluation
 impl DistributionFunction {
     fn _get_index(values: &Vec<f64>, input_value: f64) -> (usize, bool) {
-        for index in 0..values.len() {
+        for index in 1..values.len() {
             if input_value == values[index] {
                 return (index, true);
             }
@@ -127,6 +124,8 @@ impl DistributionFunction {
         let is_exact: bool = tuple.1;
         if is_exact {
             return self.x_values[index];
+        } else if index == self.length - 1 {
+            return self.x_values[index];
         } else {
             let numerator: f64 = self.x_values[index + 1] - self.x_values[index];
             let denominator: f64 = self.y_values[index + 1] - self.y_values[index];
@@ -151,6 +150,8 @@ impl DistributionFunction {
 // Uniform Distribution
 impl DistributionFunction {
     fn _single_uniform() -> f64 {
+        use rand::Rng;
+        use rand::rngs::ThreadRng;
         let mut rng: ThreadRng = rand::thread_rng();
         rng.gen()
     }
@@ -180,5 +181,22 @@ impl DistributionFunction {
 
     pub fn gens(&self, number: u32) -> Vec<f64> {
         self._inverse_transform_sampling(number)
+    }
+}
+
+// Export
+impl DistributionFunction {
+    pub fn export(self, file_name: &str, number: u32) {
+        use std::{fs::File, io::Write};
+
+        let random_numbers: Vec<f64> = self.gens(number);
+
+        let string = random_numbers.into_iter()
+            .map(|num| num.to_string())
+            .collect::<Vec<String>>()
+            .join("\n");
+
+        let mut file = File::create(file_name).unwrap();
+        file.write_all(string.as_bytes()).unwrap()
     }
 }

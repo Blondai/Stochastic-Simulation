@@ -1,4 +1,8 @@
+# Folder
 /target
 /.idea
 /.git
 /.old
+
+# Files
+Cargo.lock
